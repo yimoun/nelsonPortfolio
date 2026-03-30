@@ -1,7 +1,6 @@
 import chainlit as cl
-from orchestrator import limited_stream
-from state import AgentState
-from langchain_core.messages import HumanMessage, AIMessage
+from graph import agent
+from langchain_core.messages import HumanMessage
 
 # Chat Start
 @cl.on_chat_start
@@ -15,20 +14,16 @@ async def on_chat_start():
 # Handle Messages
 @cl.on_message
 async def on_message(msg: cl.Message):
-    state: AgentState = cl.user_session.get("state")
+    state = cl.user_session.get("state")
     state["messages"].append(HumanMessage(content=msg.content))
 
-    ai_msg = cl.Message(content="")
-    await ai_msg.send()
+    final_state = await agent.ainvoke(state)
 
-    content = ""
-    async for chunk in limited_stream(state["messages"]):
-        content += chunk.content
-        await ai_msg.stream_token(chunk.content)
+    ai_response = final_state["messages"][-1].content
+    cl.user_session.set("state", final_state)
+    await cl.Message(content=ai_response).send()
 
-    state["messages"].append(AIMessage(content=content))
-    cl.user_session.set("state", state)
-    await ai_msg.update()
+    print("cl.user_session:", cl.user_session.get("state"))
 
 # Chat Stop
 @cl.on_stop
