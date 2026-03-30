@@ -7,8 +7,9 @@ from langchain_core.messages import HumanMessage, AIMessage
 async def on_chat_start():
     cl.user_session.set("state", {"messages": []})
     await cl.Message(
-            content="👋 Hello! Je suis l'assistant IA qui répond à tes questions réponds à toutes tes"
-                    + "questions sur Nelson Yimou. Comment puis-je t'aider aujourd'hui ?").send()
+            content="👋 Hello! Je suis un assistant IA qui répond à toutes tes"
+                    + " questions sur [Nelson Yimou](https://www.linkedin.com/in/nelson-yimou-02493621a/). "
+                    + "Comment puis-je t'aider aujourd'hui ?").send()
 
 # Handle Messages
 @cl.on_message

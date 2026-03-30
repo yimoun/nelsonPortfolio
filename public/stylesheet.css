@@ -1,0 +1,8 @@
+a[href] {
+    color: #22c55e !important;
+    text-decoration: none !important;
+}
+
+a[href]:hover {
+    color: #16a34a !important;
+}
