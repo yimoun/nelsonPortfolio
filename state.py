@@ -1,3 +1,5 @@
+# Typage AgentState / messages
+
 from typing import TypedDict, List
 from langchain_core.messages import BaseMessage
 
