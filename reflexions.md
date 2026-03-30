@@ -14,6 +14,8 @@ Client (Browser)
       ↓
 Chainlit (UI + API)         → app.py
       ↓
+LangGraph (agent engine)    → graph.py
+      ↓
 Orchestrator (retry/queue)  → orchestrator.py
       ↓
 Routing (smart selection)   → routing.py
@@ -25,7 +27,20 @@ State (typage)              → state.py
 
 ---
 
-## 2. Multi-provider : évolution des choix
+## 2. State management
+
+**Décision** : Typer l'état avec `TypedDict` dès le départ.
+
+**v1** : `messages: List[BaseMessage]` — simple, suffisant pour un premier prototype.
+
+**v2 (actuelle)** : `messages: Annotated[list[BaseMessage], add_messages]` — le reducer `add_messages`
+permet à chaque node LangGraph de retourner uniquement ses nouveaux messages.
+LangGraph fusionne automatiquement avec l'état existant. Sans ça, ajouter un 2e node (tools, RAG)
+causerait des doublons ou des écrasements de messages.
+
+---
+
+## 3. Multi-provider : évolution des choix
 
 ### v1 — Ollama (local) + Groq (cloud)
 
@@ -41,7 +56,7 @@ LM Studio expose une API compatible OpenAI (`localhost:1234`), donc utilisation 
 
 **Problème réalisé** : L'architecture local/cloud n'a pas de sens pour un projet destiné à être
 déployé en production. En prod, il n'y a pas de serveur local. Le fallback local → cloud
-était un exercice artificiel (Donc unitil pour ce type de Projet), pas une architecture production-ready.
+était un exercice artificiel (Donc inutile pour ce type de Projet), pas une architecture production-ready.
 
 ### v3 (actuelle) — Groq (principal) + Gemini (fallback)
 
@@ -58,7 +73,7 @@ partout avec les mêmes providers cloud.
 
 ---
 
-## 3. Routing simplifié
+## 4. Routing simplifié
 
 **v1** : Routing par environnement (`ENVIRONMENT=local` → LM Studio, `production` → Groq).
 
@@ -68,7 +83,7 @@ Plus de variable d'environnement à gérer — la présence des clés API suffit
 
 ---
 
-## 4. Résilience : retry + fallback + concurrency
+## 5. Résilience : retry + fallback + concurrency
 
 **Décision** : L'orchestrateur implémente 3 mécanismes de résilience.
 - **Retry** : Chaque provider est réessayé `LLM_RETRIES` fois avant d'être abandonné
@@ -83,14 +98,10 @@ unidirectionnel (local → cloud). Les deux chemins sont viables en production.
 
 ---
 
-## 5. State management
+## 6. LangGraph
 
-**Décision** : Typer l'état avec `TypedDict` (LangChain pattern).
+**Décision** : Introduire LangGraph dès maintenant avec un seul node (`llm_node`).
 
-```python
-class AgentState(TypedDict):
-    messages: List[BaseMessage]
-```
-
-**Pourquoi** : Prépare l'intégration future de LangGraph (qui attend un `TypedDict` comme state).
-Même sans LangGraph pour l'instant, le typage rend le code plus lisible et auto-documenté.
+**Pourquoi maintenant et pas plus tard ?** : Refactorer pour ajouter LangGraph après coup est plus coûteux
+que de l'intégrer dès le début. Le node `llm_node` réutilise l'orchestrateur existant (retry + fallback),
+donc aucune logique n'est dupliquée.
