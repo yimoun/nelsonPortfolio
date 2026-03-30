@@ -3,7 +3,7 @@ from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq
 import os
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def create_groq():
     if GROQ_API_KEY:

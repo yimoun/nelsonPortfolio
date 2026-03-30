@@ -1,4 +1,5 @@
 import chainlit as cl
+from orchestrator import limited_stream
 from state import AgentState
 from langchain_core.messages import HumanMessage, AIMessage
 
@@ -21,9 +22,9 @@ async def on_message(msg: cl.Message):
     await ai_msg.send()
 
     content = ""
-    # async for chunk in limited_stream(state["messages"]):
-    #     content += chunk.content
-    #     await ai_msg.stream_token(chunk.content)
+    async for chunk in limited_stream(state["messages"]):
+        content += chunk.content
+        await ai_msg.stream_token(chunk.content)
 
     state["messages"].append(AIMessage(content=content))
     cl.user_session.set("state", state)
