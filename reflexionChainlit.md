@@ -20,7 +20,27 @@
             3. Grant all permission of 'my_chainlit_db' to user 'admin'
     Next we have to launch this installation: pip install asyncpg SQLAlchemy aiohttp greenlet
 
-    # @cl.data_layer with the conninfo: DATABASEURL
+    # @cl.data_layer with the conninfo=DATABASEURL
+
+# Deploy Chainlit with FastAPI and/or with Ngrok
+# Customization: 
+    -->Logo and FavIcon
+    -->Chainlit Theme / CSS / Remote Watermark
+
+# Les Starters
+    --> Personnaliser un message d'acceuil pour chaque Starter
+
+# Diplay elements: Images and PDF / Videos & Audio / Draw Bar Pie Scatter Charts / 
+
+[ Client (Browser) ]
+        ↓
+[ Chainlit (UI + API) ]
+        ↓
+[ LangGraph (Agent Engine) ]
+        ↓
+[ Tools / LLM / Services ]
+        ↓
+[ Data Layer (PostgreSQL + Storage) ]
 
 
 
