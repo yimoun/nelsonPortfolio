@@ -105,3 +105,27 @@ unidirectionnel (local → cloud). Les deux chemins sont viables en production.
 **Pourquoi maintenant et pas plus tard ?** : Refactorer pour ajouter LangGraph après coup est plus coûteux
 que de l'intégrer dès le début. Le node `llm_node` réutilise l'orchestrateur existant (retry + fallback),
 donc aucune logique n'est dupliquée.
+
+---
+
+## 7. CI/CD avec GitHub Actions (en cours d'apprentissage)
+
+**Décision** : Faire une pause sur le développement du chatbot pour suivre un tuto GitHub Actions,
+puis appliquer ce que j'apprends directement à ce projet.
+
+**Pourquoi maintenant** : Le projet est au bon stade — l'architecture est posée, il y a déjà
+plusieurs modules à tester et des secrets à gérer (`GROQ_API_KEY`, `GEMINI_API_KEY`).
+Mettre en place le CI/CD avant d'avoir trop de code, c'est plus simple que de tout refactorer après.
+
+### Roadmap d'implémentation (mise à jour au fil du tuto)
+
+- [ ] **Niveau 1 — Workflow de validation** : `.github/workflows/ci.yml` avec lint (ruff/black)
+      sur `push` et `pull_request`. Utilise `actions/checkout`.
+- [ ] **Niveau 2 — Tests automatisés** : `pytest` sur `routing.py` (logique pure) et `providers.py`
+      (avec mocks). Workflow lance les tests à chaque push. Utilise `actions/setup-python@v5`.
+- [ ] **Niveau 3 — Secrets management** : Stocker `GROQ_API_KEY` et `GEMINI_API_KEY` dans
+      GitHub Secrets, les injecter dans les workflows pour les tests d'intégration.
+- [ ] **Niveau 4 — Workflows manuels & schedulés** : `workflow_dispatch` pour déploiement manuel,
+      `schedule` pour un healthcheck horaire du chatbot déployé.
+- [ ] **Niveau 5 — Déploiement continu** : Job `deploy` avec `needs: test` pour push automatique
+      vers Render/Railway quand `main` est mis à jour. Badge de statut dans le README.
