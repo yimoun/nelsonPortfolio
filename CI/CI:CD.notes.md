@@ -22,8 +22,16 @@ GitLab, BitBucket
 # GitHUb Actions Key Elements
 **Workflows**: Attached to a GitHub repository...contain one or more **Jobs**...Triggered upon **Events** 
 **Jobs**: Define a **Runner(Execution envionment)**...Contain one or more **Steps**...Run in parallel(default) or sequential Can be conditional
-**Steps**: Execute a shell script or an Action
+**Steps**: Execute a shell script or an Action...
 
-Basically, actions in the context of GitHub Action
+# Events (Workflow Triggers)
+**Repository-related**: push/pull_request/create/fork/issues/watch/discussion/issue_comment/
+**Other**: Workflow_dispatch(Manually trigger workflow)/repository_dispatch(REST API request triggers workflow)/schedule (Workflow is scheduled)/Workflow_call (Can be call by other workflows).
 
-are predefined scripts that perform a certain task
+# What are Actions ?
+**Action** is a (custom) application that perfoms a (typically complex) frequently repeated task. It's useful when you don't have to use a run command. You can build your own Actions but you can also use official or community Actions (for example **GitHub Action Checkout**).
+Example of List of Steps belong in a "test" job:
+1. Get code (using the GitHub Action Checkout )
+2. Install NodeJS (using the action/setup-node@v3)
+3. Install dependencies (using a runn command)
+4. Run tests (using a run command)
